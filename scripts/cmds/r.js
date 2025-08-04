@@ -1,8 +1,8 @@
 module.exports = {
 	config: {
-		name: "unsend",
+		name: "r",
 		version: "1.2",
-		author: "NTKhang",
+		author: "ncs$alamin",
 		countDown: 5,
 		role: 0,
 		description: {
