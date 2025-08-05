@@ -4,17 +4,17 @@ const request = require("request");
 
 module.exports = {
   config: {
-    name: 'auto',
-    version: '0.1.0',
-    author: 'ArYAN',
+    name: "auto",
+    version: "0.0.1",
+    author: "ArYAN",
     countDown: 5,
     role: 0,
-    shortDescription: 'Auto video download from any URL (YouTube supported)',
-    category: 'media',
+    shortDescription: "Always active auto video download for any URL",
+    category: "media"
   },
 
   onStart: async function ({ api, event }) {
-    return api.sendMessage("✅ AutoLink is running", event.threadID);
+    return api.sendMessage("✅ AutoLink Is running ", event.threadID);
   },
 
   onChat: async function ({ api, event }) {
@@ -27,42 +27,28 @@ module.exports = {
     const url = linkMatch[0];
     api.setMessageReaction("⏳", event.messageID, () => {}, true);
 
-    const isYouTube = /(?:youtube\.com|youtu\.be)/.test(url);
-
     try {
-      let videoUrl = null;
-      let title = "No Title";
+      const response = await axios.get(
+        `https://aryan-video-downloader.vercel.app/alldl?url=${encodeURIComponent(url)}`
+      );
+      const data = response.data.data || {};
+      const videoUrl = data.videoUrl || data.high || data.low || null;
+      if (!videoUrl) return;
 
-      if (isYouTube) {
-        const ytRes = await axios.get(`https://aryan-xyz-ytdl-five.vercel.app/download?url=${encodeURIComponent(url)}`);
-        if (!ytRes.data || !ytRes.data.url) {
-          return api.sendMessage("❌ Failed to download YouTube video.", threadID, event.messageID);
-        }
-        videoUrl = ytRes.data.url;
-        title = ytRes.data.title || "YouTube Video";
-      } else {
-        const response = await axios.get(`https://aryan-video-downloader.vercel.app/alldl?url=${encodeURIComponent(url)}`);
-        const data = response.data.data || {};
-        title = data.title || "No Title";
-        videoUrl = data.videoUrl || data.high || data.low || null;
-      }
-
-      if (!videoUrl) {
-        return;
-      }
-
-      const filePath = `video_${Date.now()}.mp4`;
-
-      request(videoUrl).pipe(fs.createWriteStream(filePath)).on("close", () => {
-        api.setMessageReaction("✅", event.messageID, () => {}, true);
-        api.sendMessage({
-          body: `${title}`,
-          attachment: fs.createReadStream(filePath)
-        }, threadID, () => fs.unlinkSync(filePath));
-      });
-
+      request(videoUrl)
+        .pipe(fs.createWriteStream("video.mp4"))
+        .on("close", () => {
+          api.setMessageReaction("✅", event.messageID, () => {}, true);
+          api.sendMessage(
+            {
+              body: "════『 AUTODL 』════\n\n✨ Here's your video! ✨",
+              attachment: fs.createReadStream("video.mp4")
+            },
+            threadID,
+            () => fs.unlinkSync("video.mp4")
+          );
+        });
     } catch (err) {
-      console.error("Download Error:", err);
       api.sendMessage("❌ Failed to download video.", threadID, event.messageID);
     }
   }
