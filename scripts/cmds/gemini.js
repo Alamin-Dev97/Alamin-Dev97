@@ -1,3 +1,4 @@
+const { GoatWrapper } = require("fca-aryan-nix");
 const axios = require("axios");
 
 module.exports = {
@@ -39,7 +40,7 @@ module.exports = {
       }, event.messageID);
     } catch (err) {
       api.setMessageReaction("❌", event.messageID, () => {}, true);
-      return api.sendMessage("⚠️ Gemini API theke response pawa jachchhe na.", event.threadID, event.messageID);
+      return api.sendMessage("⚠ Gemini API theke response pawa jachchhe na.", event.threadID, event.messageID);
     }
   },
 
@@ -68,7 +69,10 @@ module.exports = {
       }, event.messageID);
     } catch (err) {
       api.setMessageReaction("❌", event.messageID, () => {}, true);
-      return api.sendMessage("⚠️ Gemini API er response dite somossa hocchhe.", event.threadID, event.messageID);
+      return api.sendMessage("⚠ Gemini API er response dite somossa hocchhe.", event.threadID, event.messageID);
     }
   }
 };
+
+const wrapper = new GoatWrapper(module.exports);
+wrapper.applyNoPrefix({ allowPrefix: true });
