@@ -1,16 +1,3 @@
-const express = require('express');
-const app = express();
-
-const PORT = process.env.PORT || 3000;
-
-app.get('/', (req, res) => {
-  res.send('Goat Bot is running');
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
 /**
  * @author NTKhang
  * ! The source code is written by NTKhang, please don't change the author's name everywhere. Thank you for using
