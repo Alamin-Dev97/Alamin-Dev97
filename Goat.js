@@ -300,3 +300,17 @@ function compareVersion(version1, version2) {
 	}
 	return 0; // version1 = version2
 }
+
+// ======= Express Server Setup for Render or Local =======
+const express = require('express');
+const app = express();
+
+const PORT = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+  res.send('Goat Bot is running');
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
